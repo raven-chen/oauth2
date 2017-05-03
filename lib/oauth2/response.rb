@@ -68,7 +68,12 @@ module OAuth2
     #   application/json Content-Type response bodies
     def parsed
       return nil unless PARSERS.key?(parser)
-      @parsed ||= PARSERS[parser].call(body)
+
+      if response.env.url.to_s.include?('graph.facebook.com')
+        @parsed ||= PARSERS[:json].call(body)
+      else
+        @parsed ||= PARSERS[parser].call(body)
+      end
     end
 
     # Attempts to determine the content type of the response.
